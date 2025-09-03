@@ -1,4 +1,6 @@
 package com.crud.eventos.repository;
 
-public interface EventoParticipanteRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface EventoParticipanteRepository extends JpaRepository<EventoRepository,Long> {
 }
