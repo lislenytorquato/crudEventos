@@ -1,5 +1,5 @@
 CREATE TABLE evento(
- id SERIAL PRIMARY KEY,
+ id BIGINT PRIMARY KEY,
  nome VARCHAR(255),
  descricao VARCHAR(255),
  data DATE,

@@ -18,6 +18,6 @@ public class Local {
     private String nome;
     private String endereco;
     private int capacidade;
-    @OneToOne(mappedBy = "local_id")
+    @OneToOne(mappedBy = "local")
     private Evento evento;
 }
