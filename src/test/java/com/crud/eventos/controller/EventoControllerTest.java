@@ -1,0 +1,99 @@
+package com.crud.eventos.controller;
+
+import com.crud.eventos.dto.EventoRequestDto;
+import com.crud.eventos.dto.EventoResponseDto;
+import com.crud.eventos.dto.LocalDto;
+import com.crud.eventos.service.EventoService;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
+import java.time.LocalDate;
+import java.util.List;
+
+@ExtendWith(MockitoExtension.class)
+public class EventoControllerTest {
+
+    @InjectMocks
+    EventoController eventoController;
+
+    @Mock
+    EventoService eventoService;
+
+    public static EventoRequestDto eventoRequest;
+    public static EventoResponseDto eventoResponse;
+
+    @BeforeEach
+    void setup(){
+         eventoRequest = EventoRequestDto.builder()
+                .nome("Workshop de Testes Automatizados")
+                .descricao("Evento sobre boas práticas de QA")
+                .data(LocalDate.of(2025, 9, 20))
+                .local(LocalDto.builder()
+                        .nome("Auditório Central")
+                        .endereco("Rua das Flores, 123")
+                        .capacidade(100)
+                        .build())
+                .idsParticipantes(List.of(1L, 2L, 3L))
+                .build();
+
+
+        eventoResponse = EventoResponseDto.builder()
+                .nome("Workshop de QA")
+                .descricao("Evento sobre automação de testes com Java")
+                .data(LocalDate.of(2025, 9, 10))
+                .local(LocalDto.builder()
+                        .nome("Auditório Central")
+                        .endereco("Rua das Flores, 123")
+                        .capacidade(100)
+                        .build())
+                .build();
+
+
+    }
+
+    @DisplayName("1- Deve criar evento")
+    @Test
+    public void deveCriarEvento(){
+
+        Mockito.when(eventoService.criarEvento(eventoRequest)).thenReturn(eventoResponse);
+        ResponseEntity<EventoResponseDto> response = this.eventoController.criar(eventoRequest);
+        Assertions.assertEquals(HttpStatus.CREATED, response.getStatusCode());
+
+    }
+    @DisplayName("2- Deve listar eventos")
+    @Test
+    public void deveListarEvento(){
+
+        Mockito.when(eventoService.listarEventos()).thenReturn(List.of(eventoResponse));
+        ResponseEntity<List<EventoResponseDto>> response = this.eventoController.listar(eventoRequest);
+        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+
+    }
+    @DisplayName("3- Deve atualizar eventos")
+    @Test
+    public void deveAtualizarEvento(){
+        Mockito.when(eventoService.atualizarEvento(1L,eventoRequest)).thenReturn(eventoResponse);
+        ResponseEntity<EventoResponseDto> response = this.eventoController.atualizar(1L, eventoRequest);
+        Assertions.assertEquals(HttpStatus.OK,response.getStatusCode());
+
+    }
+    @DisplayName("4- Deve deletar evento")
+    @Test
+    public void deveDeletarEvento(){
+
+        Mockito.doNothing().when(eventoService).deletarEvento(1L);
+        ResponseEntity<Void> response = this.eventoController.deletar(1L);
+        Assertions.assertEquals(HttpStatus.NO_CONTENT,response.getStatusCode());
+
+    }
+
+}

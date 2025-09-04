@@ -1,20 +1,19 @@
 package com.crud.eventos.dto;
 
-import com.crud.eventos.model.EventoParticipante;
-import com.crud.eventos.model.Local;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Builder
 @Getter
-public class EventoResponsetDto {
+@Setter
+public class EventoResponseDto {
 
     private String nome;
     private String descricao;
     private LocalDate data;
-    private Local local;
-    private List<EventoParticipante> eventosParticipantes;
+    private LocalDto local;
 }

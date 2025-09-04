@@ -1,7 +1,7 @@
 package com.crud.eventos.service;
 
 import com.crud.eventos.dto.EventoRequestDto;
-import com.crud.eventos.dto.EventoResponsetDto;
+import com.crud.eventos.dto.EventoResponseDto;
 import com.crud.eventos.mapper.EventoMapper;
 import com.crud.eventos.model.Evento;
 import com.crud.eventos.model.EventoParticipante;
@@ -13,8 +13,8 @@ import com.crud.eventos.repository.LocalRepository;
 import com.crud.eventos.repository.ParticipanteRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class EventoService {
@@ -32,28 +32,26 @@ public class EventoService {
         this.eventoParticipanteRepository = eventoParticipanteRepository;
     }
 
-    public EventoResponsetDto criarEvento(EventoRequestDto eventoRequestDto){
+    public EventoResponseDto criarEvento(EventoRequestDto eventoRequestDto){
         Evento evento = mapper.requestToEntity(eventoRequestDto);
 
         Local local = evento.getLocal();
         localRepository.save(local);
 
-        eventoRequestDto.getEventosParticipantes().forEach(eventoParticipante -> {
-            if (eventoParticipante.isPresenca_confirmada()){
-                participanteRepository.save(eventoParticipante.getParticipante());
-                eventoParticipanteRepository.save(eventoParticipante);
-            }
+        eventoRequestDto.getIdsParticipantes().forEach(idParticipante ->{
+            Participante participante = participanteRepository.findById(idParticipante).orElseThrow();
+            participante.getEventosParticipantes().forEach(eventoParticipanteRepository::save);
         });
 
         eventoRepository.save(evento);
 
-        return mapper.entityToResponse(evento);
+       return mapper.entityToResponse(evento);
     }
-    public List<EventoResponsetDto> listarEventos(){
+    public List<EventoResponseDto> listarEventos(){
         List<Evento> listaDeEventos = eventoRepository.findAll();
         return mapper.listaEntityToListaResponse(listaDeEventos);
     }
-    public EventoResponsetDto atualizarEvento(Long id,EventoRequestDto eventoRequestDto){
+    public EventoResponseDto atualizarEvento(Long id, EventoRequestDto eventoRequestDto){
         Evento evento = eventoRepository.findById(id).orElseThrow();
         mapper.atualizarEvento(evento,eventoRequestDto);
         eventoRepository.save(evento);
