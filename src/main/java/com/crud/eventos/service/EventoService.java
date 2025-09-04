@@ -62,6 +62,20 @@ public class EventoService {
 
     public void deletarEvento(Long id){
         Evento evento = eventoRepository.findById(id).orElseThrow();
-        eventoRepository.deleteById(id);
+
+        evento.getEventosParticipantes().forEach(eventoParticipante -> {
+
+                EventoParticipante eventoParticipanteEncontrado = eventoParticipanteRepository.findById(eventoParticipante.getId()).orElseThrow();
+                eventoParticipanteRepository.delete(eventoParticipanteEncontrado);
+
+        });
+
+        eventoRepository.delete(evento);
+
+        Local local = localRepository.findById(evento.getLocal().getId()).orElseThrow();
+           localRepository.delete(local);
+
+
+
     }
 }
