@@ -1,8 +1,9 @@
 package com.crud.eventos.dto;
 
 import com.crud.eventos.model.EventoParticipante;
+import com.crud.eventos.model.Local;
 import lombok.Getter;
-import org.springframework.cglib.core.Local;
+
 
 import java.time.LocalDate;
 import java.util.ArrayList;
