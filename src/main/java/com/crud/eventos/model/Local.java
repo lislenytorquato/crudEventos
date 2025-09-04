@@ -1,13 +1,11 @@
 package com.crud.eventos.model;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 @Entity
 @Data
+@Builder
 public class Local {
 
     @Id

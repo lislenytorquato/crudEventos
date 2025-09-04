@@ -1,10 +1,7 @@
 package com.crud.eventos.model;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 
 import java.time.LocalDate;
@@ -13,6 +10,7 @@ import java.util.List;
 
 @Entity
 @Data
+@Builder
 public class Evento {
 
     @Id

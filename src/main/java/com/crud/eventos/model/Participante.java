@@ -1,16 +1,14 @@
 package com.crud.eventos.model;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Data
+@Builder
 public class Participante {
 
     @Id
