@@ -3,7 +3,9 @@ package com.crud.eventos.model;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
 @Entity
 @Builder
 public class EventoParticipante {

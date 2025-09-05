@@ -1,8 +1,8 @@
 package com.crud.eventos.controller;
 
+import com.crud.eventos.helper.TestHelper;
 import com.crud.eventos.dto.EventoRequestDto;
 import com.crud.eventos.dto.EventoResponseDto;
-import com.crud.eventos.dto.LocalDto;
 import com.crud.eventos.service.EventoService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,8 +16,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.time.LocalDate;
 import java.util.List;
+
+import static com.crud.eventos.helper.TestHelper.*;
 
 @ExtendWith(MockitoExtension.class)
 public class EventoControllerTest {
@@ -33,31 +34,8 @@ public class EventoControllerTest {
 
     @BeforeEach
     void setup(){
-         eventoRequest = EventoRequestDto.builder()
-                .nome("Workshop de Testes Automatizados")
-                .descricao("Evento sobre boas práticas de QA")
-                .data(LocalDate.of(2025, 9, 20))
-                .local(LocalDto.builder()
-                        .nome("Auditório Central")
-                        .endereco("Rua das Flores, 123")
-                        .capacidade(100)
-                        .build())
-                .idsParticipantes(List.of(1L, 2L, 3L))
-                .build();
-
-
-        eventoResponse = EventoResponseDto.builder()
-                .nome("Workshop de QA")
-                .descricao("Evento sobre automação de testes com Java")
-                .data(LocalDate.of(2025, 9, 10))
-                .local(LocalDto.builder()
-                        .nome("Auditório Central")
-                        .endereco("Rua das Flores, 123")
-                        .capacidade(100)
-                        .build())
-                .build();
-
-
+            eventoRequest = TestHelper.requestDto(NOME_EVENTO,DESCRICAO_EVENTO,DATA_EVENTO,NOME_LOCAL,ENDERECO_LOCAL,CAPACIDADE_LOCAL,ID_PARTICIPANTE_1,ID_PARTICIPANTE_2);
+            eventoResponse = TestHelper.responseDto(NOME_EVENTO,DESCRICAO_EVENTO,DATA_EVENTO,NOME_LOCAL,ENDERECO_LOCAL,CAPACIDADE_LOCAL,NOME_1,EMAIL_1,PRESENCA_1,NOME_2,EMAIL_2,PRESENCA_2);
     }
 
     @DisplayName("1- Deve criar evento")

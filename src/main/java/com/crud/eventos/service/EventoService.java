@@ -2,6 +2,7 @@ package com.crud.eventos.service;
 
 import com.crud.eventos.dto.EventoRequestDto;
 import com.crud.eventos.dto.EventoResponseDto;
+import com.crud.eventos.dto.ParticipanteDto;
 import com.crud.eventos.mapper.EventoMapper;
 import com.crud.eventos.model.Evento;
 import com.crud.eventos.model.EventoParticipante;
@@ -37,25 +38,26 @@ public class EventoService {
 
         Local local = evento.getLocal();
         localRepository.save(local);
-
-        eventoRequestDto.getIdsParticipantes().forEach(idParticipante ->{
-            Participante participante = participanteRepository.findById(idParticipante).orElseThrow();
-            participante.getEventosParticipantes().forEach(eventoParticipanteRepository::save);
-        });
+        List<ParticipanteDto> participanteDtos = participantesDto(eventoRequestDto);
 
         eventoRepository.save(evento);
 
-       return mapper.entityToResponse(evento);
+       return mapper.entityToResponse(evento,participanteDtos);
     }
+
     public List<EventoResponseDto> listarEventos(){
         List<Evento> listaDeEventos = eventoRepository.findAll();
         return mapper.listaEntityToListaResponse(listaDeEventos);
     }
+
     public EventoResponseDto atualizarEvento(Long id, EventoRequestDto eventoRequestDto){
         Evento evento = eventoRepository.findById(id).orElseThrow();
+
+        List<ParticipanteDto> participanteDtos = participantesDto(eventoRequestDto);
         mapper.atualizarEvento(evento,eventoRequestDto);
         eventoRepository.save(evento);
-        return mapper.entityToResponse(evento);
+
+        return mapper.entityToResponse(evento,participanteDtos);
     }
 
     public void deletarEvento(Long id){
@@ -67,13 +69,28 @@ public class EventoService {
                 eventoParticipanteRepository.delete(eventoParticipanteEncontrado);
 
         });
-
         eventoRepository.delete(evento);
 
         Local local = localRepository.findById(evento.getLocal().getId()).orElseThrow();
-           localRepository.delete(local);
+        localRepository.delete(local);
+    }
+
+    private List<ParticipanteDto> participantesDto (EventoRequestDto eventoRequestDto){
+        List<Participante> participantes = new ArrayList<>();
+        List<Boolean> presencas_confirmadas = new ArrayList<>();
+
+        eventoRequestDto.getIdsParticipantes().forEach(idParticipante ->{
+            Participante participante = participanteRepository.findById(idParticipante).orElseThrow();
+            participantes.add(participante);
+            participante.getEventosParticipantes().forEach(eventoParticipante -> {
+                presencas_confirmadas.add(eventoParticipante.isPresenca_confirmada());
+                eventoParticipanteRepository.save(eventoParticipante);
+            });
+
+        });
 
 
 
+        return mapper.participantesToParticipantesDto(participantes,presencas_confirmadas);
     }
 }

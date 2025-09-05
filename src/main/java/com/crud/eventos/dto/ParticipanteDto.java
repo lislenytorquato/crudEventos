@@ -9,8 +9,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class LocalDto {
+public class ParticipanteDto {
+
     private String nome;
-    private String endereco;
-    private int capacidade;
+    private String email;
+    private boolean presenca_confirmada;
 }
