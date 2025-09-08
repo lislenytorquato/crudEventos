@@ -23,6 +23,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -67,11 +68,11 @@ void deveCriarEvento(){
 
     Evento evento = mapper.requestToEntity(eventoRequest);
     Mockito.when(localRepository.save(Mockito.any(Local.class))).thenReturn(evento.getLocal());
-    Mockito.when(participanteRepository.findById(1L)).thenReturn(Optional.ofNullable(participante1(ID_PARTICIPANTE_1, NOME_1, EMAIL_1)));
-    Mockito.when(participanteRepository.findById(2L)).thenReturn(Optional.ofNullable(participante2(ID_PARTICIPANTE_2, NOME_2, EMAIL_2)));
-    Mockito.when(eventoParticipanteRepository.save(Mockito.any(EventoParticipante.class))).thenReturn(participante1(ID_PARTICIPANTE_1, NOME_1, EMAIL_1).getEventosParticipantes().get(0));
+    Mockito.when(participanteRepository.findById(1L)).thenReturn(Optional.ofNullable(participante1()));
+    Mockito.when(participanteRepository.findById(2L)).thenReturn(Optional.ofNullable(participante2()));
+    Mockito.when(eventoParticipanteRepository.save(Mockito.any(EventoParticipante.class))).thenReturn(participante1().getEventosParticipantes().get(0));
 
-    List<ParticipanteDto> participantes = mapper.participantesToParticipantesDto(List.of(participante1(ID_PARTICIPANTE_1, NOME_1, EMAIL_1), participante1(ID_PARTICIPANTE_2, NOME_2, EMAIL_2)), List.of(PRESENCA_1, PRESENCA_2));
+    List<ParticipanteDto> participantes = mapper.participantesToParticipantesDto(List.of(participante1(), participante1()), List.of(PRESENCA_1, PRESENCA_2));
     Mockito.when(eventoRepository.save(Mockito.any(Evento.class))).thenReturn(evento);
     mapper.entityToResponse(evento,participantes);
     EventoResponseDto responseDto = this.eventoService.criarEvento(eventoRequest);
@@ -93,4 +94,39 @@ void deveCriarEvento(){
 
 
 }
+    @DisplayName("2- Deve listar evento")
+    @Test
+    void deveListarEvento(){
+        List<Evento> eventos = new ArrayList<>();
+        List<Participante> participantes = new ArrayList<>();
+        List<Boolean> presencasConfirmadas = new ArrayList<>();
+
+        eventos.add(evento());
+        participantes.add(participante1());
+        participantes.add(participante2());
+        presencasConfirmadas.add(participante1().getEventosParticipantes().get(0).isPresenca_confirmada());
+        presencasConfirmadas.add(participante2().getEventosParticipantes().get(0).isPresenca_confirmada());
+        Mockito.when(eventoRepository.findAll()).thenReturn(eventos);
+
+        List<ParticipanteDto> participantesDtos = mapper.participantesToParticipantesDto(participantes, presencasConfirmadas);
+        List<EventoResponseDto> eventoResponse = mapper.listaEntityToListaResponse(eventos,participantesDtos);
+
+        List<EventoResponseDto> response = this.eventoService.listarEventos();
+
+
+        Assertions.assertEquals(eventoResponse.size(),response.size());
+        Assertions.assertEquals(eventoResponse.get(0).getNome(),response.get(0).getNome());
+        Assertions.assertEquals(eventoResponse.get(0).getDescricao(),response.get(0).getDescricao());
+        Assertions.assertEquals(eventoResponse.get(0).getData(),response.get(0).getData());
+        Assertions.assertEquals(eventoResponse.get(0).getLocal().getNome(),response.get(0).getLocal().getNome());
+        Assertions.assertEquals(eventoResponse.get(0).getLocal().getEndereco(),response.get(0).getLocal().getEndereco());
+        Assertions.assertEquals(eventoResponse.get(0).getLocal().getCapacidade(),response.get(0).getLocal().getCapacidade());
+        Assertions.assertEquals(eventoResponse.get(0).getParticipantes().get(0).getNome(), response.get(0).getParticipantes().get(0).getNome());
+        Assertions.assertEquals(eventoResponse.get(0).getParticipantes().get(0).getEmail(), response.get(0).getParticipantes().get(0).getEmail());
+        Assertions.assertEquals(eventoResponse.get(0).getParticipantes().get(0).isPresenca_confirmada(), response.get(0).getParticipantes().get(0).isPresenca_confirmada());
+        Assertions.assertEquals(eventoResponse.get(0).getParticipantes().get(0).getNome(), response.get(0).getParticipantes().get(0).getNome());
+        Assertions.assertEquals(eventoResponse.get(0).getParticipantes().get(0).getEmail(), response.get(0).getParticipantes().get(0).getEmail());
+        Assertions.assertEquals(eventoResponse.get(0).getParticipantes().get(0).isPresenca_confirmada(), response.get(0).getParticipantes().get(0).isPresenca_confirmada());
+
+    }
 }

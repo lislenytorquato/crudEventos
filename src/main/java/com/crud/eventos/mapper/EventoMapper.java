@@ -2,6 +2,7 @@ package com.crud.eventos.mapper;
 
 import com.crud.eventos.dto.EventoRequestDto;
 import com.crud.eventos.dto.EventoResponseDto;
+import com.crud.eventos.dto.LocalDto;
 import com.crud.eventos.dto.ParticipanteDto;
 import com.crud.eventos.model.Evento;
 import com.crud.eventos.model.EventoParticipante;
@@ -34,7 +35,16 @@ public interface EventoMapper {
         return participanteDtos;
     }
     EventoResponseDto entityToResponse(Evento evento, List<ParticipanteDto> participantes);
-    List<EventoResponseDto> listaEntityToListaResponse(List<Evento> listaDeEventos);
+    default List<EventoResponseDto> listaEntityToListaResponse(List<Evento> listaDeEventos, List<ParticipanteDto> participantes){
+        List<EventoResponseDto> listaEventoResponseDto = new ArrayList<>();
+        listaDeEventos.forEach(evento -> {
+                LocalDto localDto = new LocalDto(evento.getLocal().getNome(), evento.getLocal().getEndereco(), evento.getLocal().getCapacidade());
+                EventoResponseDto eventoResponseDto = new EventoResponseDto(evento.getNome(), evento.getDescricao(), evento.getData(), localDto, participantes);
+
+                listaEventoResponseDto.add(eventoResponseDto);
+        });
+        return listaEventoResponseDto;
+    }
     void atualizarEvento(@MappingTarget Evento evento,EventoRequestDto eventoRequestDto);
 
 }

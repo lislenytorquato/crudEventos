@@ -46,8 +46,19 @@ public class EventoService {
     }
 
     public List<EventoResponseDto> listarEventos(){
+        List<Participante> participantes = new ArrayList<>();
+        List<Boolean> presencasConfirmadas = new ArrayList<>();
+
         List<Evento> listaDeEventos = eventoRepository.findAll();
-        return mapper.listaEntityToListaResponse(listaDeEventos);
+
+        listaDeEventos.forEach(evento -> {
+            evento.getEventosParticipantes().forEach(eventoParticipante -> {
+                participantes.add(eventoParticipante.getParticipante());
+                presencasConfirmadas.add(eventoParticipante.isPresenca_confirmada());
+            });
+        });
+        List<ParticipanteDto> participantesDtos = mapper.participantesToParticipantesDto(participantes, presencasConfirmadas);
+        return mapper.listaEntityToListaResponse(listaDeEventos,participantesDtos);
     }
 
     public EventoResponseDto atualizarEvento(Long id, EventoRequestDto eventoRequestDto){

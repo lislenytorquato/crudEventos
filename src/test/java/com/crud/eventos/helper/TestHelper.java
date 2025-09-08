@@ -71,25 +71,25 @@ public class TestHelper {
                 .presenca_confirmada(presenca)
                 .build();
     }
-    public static Participante participante1(Long id, String nome, String email){
+    public static Participante participante1(){
         List<EventoParticipante> eventoParticipantes = new ArrayList<>();
         eventoParticipantes.add(eventoParticipante1());
         eventoParticipantes.add(eventoParticipante2());
 
         return Participante.builder()
-                .id(id)
-                .nome(nome)
-                .email(email)
+                .id(ID_PARTICIPANTE_1)
+                .nome(NOME_1)
+                .email(EMAIL_1)
                 .eventosParticipantes(eventoParticipantes.stream().toList()).build();
     }
-    public static Participante participante2(Long id, String nome, String email){
+    public static Participante participante2(){
         List<EventoParticipante> eventoParticipantes = new ArrayList<>();
         eventoParticipantes.add(eventoParticipante2());
 
         return Participante.builder()
-                .id(id)
-                .nome(nome)
-                .email(email)
+                .id(ID_PARTICIPANTE_2)
+                .nome(NOME_2)
+                .email(EMAIL_2)
                 .eventosParticipantes(eventoParticipantes.stream().toList()).build();
     }
     public static Participante participante(Long id, String nome, String email){
@@ -119,7 +119,7 @@ public class TestHelper {
     public static EventoParticipante eventoParticipante2(){
         return EventoParticipante.builder().evento(
                         Evento.builder()
-                                .id(1L)
+                                .id(2L)
                                 .nome(NOME_EVENTO)
                                 .data(DATA_EVENTO)
                                 .descricao(DESCRICAO_EVENTO)
