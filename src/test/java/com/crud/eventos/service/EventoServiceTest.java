@@ -64,7 +64,7 @@ void setup(){
 void deveCriarEvento(){
 
     EventoRequestDto eventoRequest = TestHelper.requestDto(NOME_EVENTO,DESCRICAO_EVENTO,DATA_EVENTO,NOME_LOCAL,ENDERECO_LOCAL,CAPACIDADE_LOCAL,ID_PARTICIPANTE_1,ID_PARTICIPANTE_2);
-    EventoResponseDto eventoResponse = TestHelper.responseDto(NOME_EVENTO,DESCRICAO_EVENTO,DATA_EVENTO,NOME_LOCAL,ENDERECO_LOCAL,CAPACIDADE_LOCAL,NOME_1,EMAIL_1,PRESENCA_1,NOME_2,EMAIL_2,PRESENCA_2);
+    EventoResponseDto eventoResponse = TestHelper.responseDto(NOME_EVENTO,DESCRICAO_EVENTO,DATA_EVENTO,NOME_LOCAL,ENDERECO_LOCAL,CAPACIDADE_LOCAL,NOME_1,EMAIL_1,PRESENCA_2,NOME_2,EMAIL_2,PRESENCA_2);
 
     Evento evento = mapper.requestToEntity(eventoRequest);
     Mockito.when(localRepository.save(Mockito.any(Local.class))).thenReturn(evento.getLocal());
@@ -72,7 +72,7 @@ void deveCriarEvento(){
     Mockito.when(participanteRepository.findById(2L)).thenReturn(Optional.ofNullable(participante2()));
     Mockito.when(eventoParticipanteRepository.save(Mockito.any(EventoParticipante.class))).thenReturn(participante1().getEventosParticipantes().get(0));
 
-    List<ParticipanteDto> participantes = mapper.participantesToParticipantesDto(List.of(participante1(), participante1()), List.of(PRESENCA_1, PRESENCA_2));
+    List<ParticipanteDto> participantes = mapper.participantesToParticipantesDto(List.of(participante1(), participante2()), List.of(PRESENCA_1, PRESENCA_2));
     Mockito.when(eventoRepository.save(Mockito.any(Evento.class))).thenReturn(evento);
     mapper.entityToResponse(evento,participantes);
     EventoResponseDto responseDto = this.eventoService.criarEvento(eventoRequest);
@@ -84,12 +84,12 @@ void deveCriarEvento(){
     Assertions.assertEquals(ENDERECO_LOCAL,responseDto.getLocal().getEndereco());
     Assertions.assertEquals(CAPACIDADE_LOCAL,responseDto.getLocal().getCapacidade());
     Assertions.assertEquals(2,responseDto.getParticipantes().size());
-    Assertions.assertEquals(NOME_1,responseDto.getParticipantes().get(0).getNome());
-    Assertions.assertEquals(EMAIL_1,responseDto.getParticipantes().get(0).getEmail());
-    Assertions.assertEquals(PRESENCA_1,responseDto.getParticipantes().get(0).isPresenca_confirmada());
-    Assertions.assertEquals(NOME_2,responseDto.getParticipantes().get(1).getNome());
-    Assertions.assertEquals(EMAIL_2,responseDto.getParticipantes().get(1).getEmail());
-    Assertions.assertEquals(PRESENCA_2,responseDto.getParticipantes().get(1).isPresenca_confirmada());
+    Assertions.assertEquals(eventoResponse.getParticipantes().get(0).getNome(),responseDto.getParticipantes().get(0).getNome());
+    Assertions.assertEquals(eventoResponse.getParticipantes().get(0).getEmail(),responseDto.getParticipantes().get(0).getEmail());
+    Assertions.assertEquals(eventoResponse.getParticipantes().get(0).isPresenca_confirmada(),responseDto.getParticipantes().get(0).isPresenca_confirmada());
+    Assertions.assertEquals(eventoResponse.getParticipantes().get(1).getNome(),responseDto.getParticipantes().get(1).getNome());
+    Assertions.assertEquals(eventoResponse.getParticipantes().get(1).getEmail(),responseDto.getParticipantes().get(1).getEmail());
+    Assertions.assertEquals(eventoResponse.getParticipantes().get(1).isPresenca_confirmada(),responseDto.getParticipantes().get(1).isPresenca_confirmada());
 
 
 
@@ -128,5 +128,35 @@ void deveCriarEvento(){
         Assertions.assertEquals(eventoResponse.get(0).getParticipantes().get(0).getEmail(), response.get(0).getParticipantes().get(0).getEmail());
         Assertions.assertEquals(eventoResponse.get(0).getParticipantes().get(0).isPresenca_confirmada(), response.get(0).getParticipantes().get(0).isPresenca_confirmada());
 
+    }
+    @DisplayName("3- Deve deletar evento")
+    @Test
+    void deveDeletarEvento(){
+        Optional<Evento> evento = Optional.of(evento());
+        Optional<EventoParticipante> eventoParticipante1 = Optional.of(eventoParticipante1());
+        Optional<EventoParticipante> eventoParticipante2 = Optional.of(eventoParticipante2());
+        Optional<Local> local = Optional.of(local());
+
+        Mockito.when(eventoRepository.findById(1L)).thenReturn(evento);
+        Mockito.when(eventoParticipanteRepository.findById(1L)).thenReturn(eventoParticipante1);
+        Mockito.when(eventoParticipanteRepository.findById(2L)).thenReturn(eventoParticipante2);
+
+        Mockito.doNothing().when(eventoParticipanteRepository).delete(eventoParticipante1.get());
+        Mockito.doNothing().when(eventoParticipanteRepository).delete(eventoParticipante2.get());
+        Mockito.doNothing().when(eventoRepository).delete(evento.get());
+
+        Mockito.when(localRepository.findById(1L)).thenReturn(local);
+        Mockito.doNothing().when(localRepository).delete(local.get());
+
+        this.eventoService.deletarEvento(1L);
+
+        Mockito.verify(eventoRepository,atMost(1)).findById(1L);
+        Mockito.verify(eventoParticipanteRepository,atMost(1)).findById(1L);
+        Mockito.verify(eventoParticipanteRepository,atMost(1)).findById(1L);
+        Mockito.verify(eventoParticipanteRepository,atMost(1)).delete(eventoParticipante1.get());
+        Mockito.verify(eventoParticipanteRepository,atMost(1)).delete(eventoParticipante2.get());
+        Mockito.verify(eventoRepository,atMost(1)).delete(evento.get());
+        Mockito.verify(localRepository,atMost(1)).findById(1L);
+        Mockito.verify(localRepository,atMost(1)).delete(local.get());
     }
 }

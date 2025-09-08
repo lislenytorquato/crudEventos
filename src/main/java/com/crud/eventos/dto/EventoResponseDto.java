@@ -1,15 +1,14 @@
 package com.crud.eventos.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Singular;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Builder
 @Getter
+@Setter
+@NoArgsConstructor
 @AllArgsConstructor
 public class EventoResponseDto {
 

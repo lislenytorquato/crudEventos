@@ -93,13 +93,13 @@ public class EventoService {
         eventoRequestDto.getIdsParticipantes().forEach(idParticipante ->{
             Participante participante = participanteRepository.findById(idParticipante).orElseThrow();
             participantes.add(participante);
+        });
+        participantes.forEach(participante -> {
             participante.getEventosParticipantes().forEach(eventoParticipante -> {
                 presencas_confirmadas.add(eventoParticipante.isPresenca_confirmada());
                 eventoParticipanteRepository.save(eventoParticipante);
             });
-
         });
-
 
 
         return mapper.participantesToParticipantesDto(participantes,presencas_confirmadas);

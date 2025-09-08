@@ -24,14 +24,17 @@ public interface EventoMapper {
     default List<ParticipanteDto> participantesToParticipantesDto(List<Participante> participantes, List<Boolean> presencas_confirmadas){
         List<ParticipanteDto> participanteDtos = new ArrayList<>();
 
+
         participantes.forEach(participante -> {
-            presencas_confirmadas.forEach(presenca ->{
+            ParticipanteDto participanteDto = new ParticipanteDto();
+            participanteDto.setNome(participante.getNome());
+            participanteDto.setEmail(participante.getEmail());
 
-                ParticipanteDto participanteDto = new ParticipanteDto(participante.getNome(),participante.getEmail(),presenca);
-                participanteDtos.add(participanteDto);
-            });
-
+            presencas_confirmadas.forEach(participanteDto::setPresenca_confirmada);
+            participanteDtos.add(participanteDto);
         });
+
+
         return participanteDtos;
     }
     EventoResponseDto entityToResponse(Evento evento, List<ParticipanteDto> participantes);

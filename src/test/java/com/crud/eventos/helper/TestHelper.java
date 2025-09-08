@@ -50,7 +50,7 @@ public class TestHelper {
                                                 String nomeParticipante2,String emailParticipante2,boolean presencaParticipante2){
         List<ParticipanteDto> listaParticipantes = new ArrayList<>();
         listaParticipantes.add(participanteDto(nomeParticipante1,emailParticipante1,presencaParticipante1));
-        listaParticipantes.add(participanteDto(nomeParticipante1,emailParticipante1,presencaParticipante1));
+        listaParticipantes.add(participanteDto(nomeParticipante2,emailParticipante2,presencaParticipante2));
 
         return EventoResponseDto.builder()
                 .nome(nomeEvento)
@@ -101,7 +101,10 @@ public class TestHelper {
                 .build();
     }
     public static EventoParticipante eventoParticipante1(){
-        return EventoParticipante.builder().evento(
+        return EventoParticipante.builder()
+                .id(1L)
+                .presenca_confirmada(true)
+                .evento(
                 Evento.builder()
                         .id(1L)
                         .nome(NOME_EVENTO)
@@ -117,7 +120,10 @@ public class TestHelper {
                         .build();
     }
     public static EventoParticipante eventoParticipante2(){
-        return EventoParticipante.builder().evento(
+        return EventoParticipante.builder()
+                .id(2L)
+                .presenca_confirmada(false)
+                .evento(
                         Evento.builder()
                                 .id(2L)
                                 .nome(NOME_EVENTO)
