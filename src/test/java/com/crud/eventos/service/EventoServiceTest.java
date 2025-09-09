@@ -1,5 +1,6 @@
 package com.crud.eventos.service;
 
+import com.crud.eventos.dto.AtualizarEventoRequestDto;
 import com.crud.eventos.dto.EventoRequestDto;
 import com.crud.eventos.dto.EventoResponseDto;
 import com.crud.eventos.dto.ParticipanteDto;
@@ -158,5 +159,41 @@ void deveCriarEvento(){
         Mockito.verify(eventoRepository,atMost(1)).delete(evento.get());
         Mockito.verify(localRepository,atMost(1)).findById(1L);
         Mockito.verify(localRepository,atMost(1)).delete(local.get());
+    }
+
+    @DisplayName("3- Deve atualizar evento")
+    @Test
+    void deveAtualizarEvento(){
+        AtualizarEventoRequestDto atualizarEventoRequestDto = atualizarEventoRequestDto();
+        EventoResponseDto eventoResponse = TestHelper.responseDto(atualizarEventoRequestDto.getNome(),atualizarEventoRequestDto.getDescricao(),atualizarEventoRequestDto.getData(),atualizarEventoRequestDto.getLocal().getNome(),atualizarEventoRequestDto.getLocal().getEndereco(),atualizarEventoRequestDto.getLocal().getCapacidade(),NOME_1,EMAIL_1,PRESENCA_2,NOME_2,EMAIL_2,PRESENCA_2);
+        List<Boolean> presencasConfirmadas = List.of(PRESENCA_1,PRESENCA_2);
+        List<Participante> participantes = List.of(participante1(),participante2());
+
+        Optional<Evento> evento = Optional.of(evento());
+
+        Mockito.when(eventoRepository.findById(ID_EVENTO)).thenReturn(evento);
+        mapper.atualizarEvento(evento.get(),atualizarEventoRequestDto);
+        Mockito.when(eventoRepository.save(evento.get())).thenReturn(evento());
+        Mockito.when(participanteRepository.findAll()).thenReturn(participantes);
+        List<ParticipanteDto> participanteDtos = mapper.participantesToParticipantesDto(participantes, presencasConfirmadas);
+        mapper.entityToResponse(evento(), participanteDtos);
+
+        EventoResponseDto response = this.eventoService.atualizarEvento(ID_EVENTO, atualizarEventoRequestDto);
+
+        Assertions.assertEquals(eventoResponse.getNome(), response.getNome());
+        Assertions.assertEquals(eventoResponse.getDescricao(), response.getDescricao());
+        Assertions.assertEquals(eventoResponse.getData(),response.getData());
+        Assertions.assertEquals(eventoResponse.getLocal().getNome(), response.getLocal().getNome());
+        Assertions.assertEquals(eventoResponse.getLocal().getEndereco(), response.getLocal().getEndereco());
+        Assertions.assertEquals(eventoResponse.getLocal().getCapacidade(), response.getLocal().getCapacidade());
+        Assertions.assertEquals(2,response.getParticipantes().size());
+        Assertions.assertEquals(eventoResponse.getParticipantes().get(0).getNome(),response.getParticipantes().get(0).getNome());
+        Assertions.assertEquals(eventoResponse.getParticipantes().get(0).getEmail(),response.getParticipantes().get(0).getEmail());
+        Assertions.assertEquals(eventoResponse.getParticipantes().get(0).isPresenca_confirmada(),response.getParticipantes().get(0).isPresenca_confirmada());
+        Assertions.assertEquals(eventoResponse.getParticipantes().get(1).getNome(),response.getParticipantes().get(1).getNome());
+        Assertions.assertEquals(eventoResponse.getParticipantes().get(1).getEmail(),response.getParticipantes().get(1).getEmail());
+        Assertions.assertEquals(eventoResponse.getParticipantes().get(1).isPresenca_confirmada(),response.getParticipantes().get(1).isPresenca_confirmada());
+
+
     }
 }

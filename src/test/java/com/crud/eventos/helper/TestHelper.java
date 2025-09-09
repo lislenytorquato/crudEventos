@@ -1,9 +1,6 @@
 package com.crud.eventos.helper;
 
-import com.crud.eventos.dto.EventoRequestDto;
-import com.crud.eventos.dto.EventoResponseDto;
-import com.crud.eventos.dto.LocalDto;
-import com.crud.eventos.dto.ParticipanteDto;
+import com.crud.eventos.dto.*;
 import com.crud.eventos.model.Evento;
 import com.crud.eventos.model.EventoParticipante;
 import com.crud.eventos.model.Local;
@@ -28,7 +25,15 @@ public class TestHelper {
     public static final String NOME_LOCAL = "Auditório Central";
     public static final String ENDERECO_LOCAL = "Rua das Flores, 123";
     public static final int CAPACIDADE_LOCAL = 100;
+    public static final Long ID_EVENTO = 1L;
 
+    public static AtualizarEventoRequestDto atualizarEventoRequestDto(){
+        return AtualizarEventoRequestDto.builder()
+                .nome("Workshop Dental")
+                .descricao("Evento de dentista")
+                .local(localDto())
+                .build();
+    }
     public static EventoRequestDto requestDto(String nomeEvento, String descricaoEvento, LocalDate dataEvento, String nomeLocal, String enderecoLocal, int capacidadeLocal, Long idParticipante1, Long idParticipante2){
 
         return EventoRequestDto.builder()
@@ -141,6 +146,13 @@ public class TestHelper {
     public static Local local(){
         return Local.builder()
                 .id(1L)
+                .nome(NOME_LOCAL)
+                .endereco(ENDERECO_LOCAL)
+                .capacidade(CAPACIDADE_LOCAL)
+                .build();
+    }
+    public static LocalDto localDto(){
+        return LocalDto.builder()
                 .nome(NOME_LOCAL)
                 .endereco(ENDERECO_LOCAL)
                 .capacidade(CAPACIDADE_LOCAL)
