@@ -1,5 +1,6 @@
 package com.crud.eventos.controller;
 
+import com.crud.eventos.dto.AtualizarEventoRequestDto;
 import com.crud.eventos.dto.EventoRequestDto;
 import com.crud.eventos.dto.EventoResponseDto;
 import com.crud.eventos.service.EventoService;
@@ -32,7 +33,7 @@ public class EventoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<EventoResponseDto> atualizar(@PathVariable Long id, @RequestBody EventoRequestDto eventoRequestDto){
+    public ResponseEntity<EventoResponseDto> atualizar(@PathVariable Long id, @RequestBody AtualizarEventoRequestDto eventoRequestDto){
         EventoResponseDto eventoResponseDto = eventoService.atualizarEvento(id, eventoRequestDto);
         return new ResponseEntity<>(eventoResponseDto, HttpStatus.OK);
     }

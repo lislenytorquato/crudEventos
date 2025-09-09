@@ -1,5 +1,6 @@
 package com.crud.eventos.service;
 
+import com.crud.eventos.dto.AtualizarEventoRequestDto;
 import com.crud.eventos.dto.EventoRequestDto;
 import com.crud.eventos.dto.EventoResponseDto;
 import com.crud.eventos.dto.ParticipanteDto;
@@ -61,12 +62,23 @@ public class EventoService {
         return mapper.listaEntityToListaResponse(listaDeEventos,participantesDtos);
     }
 
-    public EventoResponseDto atualizarEvento(Long id, EventoRequestDto eventoRequestDto){
+    public EventoResponseDto atualizarEvento(Long id, AtualizarEventoRequestDto atualizarEventoRequestDto){
+        List<Boolean> presencasConfirmadas = new ArrayList<>();
+
         Evento evento = eventoRepository.findById(id).orElseThrow();
 
-        List<ParticipanteDto> participanteDtos = participantesDto(eventoRequestDto);
-        mapper.atualizarEvento(evento,eventoRequestDto);
+        mapper.atualizarEvento(evento,atualizarEventoRequestDto);
+
         eventoRepository.save(evento);
+
+        List<Participante> participantes = participanteRepository.findAll();
+        participantes.forEach(participante -> {
+            participante.getEventosParticipantes().forEach(eventoParticipante -> {
+                presencasConfirmadas.add(eventoParticipante.isPresenca_confirmada());
+            });
+        });
+
+        List<ParticipanteDto> participanteDtos = mapper.participantesToParticipantesDto(participantes, presencasConfirmadas);
 
         return mapper.entityToResponse(evento,participanteDtos);
     }

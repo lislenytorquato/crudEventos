@@ -1,5 +1,6 @@
 package com.crud.eventos.controller;
 
+import com.crud.eventos.dto.AtualizarEventoRequestDto;
 import com.crud.eventos.helper.TestHelper;
 import com.crud.eventos.dto.EventoRequestDto;
 import com.crud.eventos.dto.EventoResponseDto;
@@ -59,8 +60,10 @@ public class EventoControllerTest {
     @DisplayName("3- Deve atualizar eventos")
     @Test
     public void deveAtualizarEvento(){
-        Mockito.when(eventoService.atualizarEvento(1L,eventoRequest)).thenReturn(eventoResponse);
-        ResponseEntity<EventoResponseDto> response = this.eventoController.atualizar(1L, eventoRequest);
+        AtualizarEventoRequestDto atualizarEventoRequestDto = atualizarEventoRequestDto();
+
+        Mockito.when(eventoService.atualizarEvento(1L,atualizarEventoRequestDto)).thenReturn(eventoResponse);
+        ResponseEntity<EventoResponseDto> response = this.eventoController.atualizar(1L, atualizarEventoRequestDto);
         Assertions.assertEquals(HttpStatus.OK,response.getStatusCode());
 
     }

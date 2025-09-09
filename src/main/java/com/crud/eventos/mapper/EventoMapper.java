@@ -1,9 +1,6 @@
 package com.crud.eventos.mapper;
 
-import com.crud.eventos.dto.EventoRequestDto;
-import com.crud.eventos.dto.EventoResponseDto;
-import com.crud.eventos.dto.LocalDto;
-import com.crud.eventos.dto.ParticipanteDto;
+import com.crud.eventos.dto.*;
 import com.crud.eventos.model.Evento;
 import com.crud.eventos.model.EventoParticipante;
 import com.crud.eventos.model.Participante;
@@ -48,6 +45,5 @@ public interface EventoMapper {
         });
         return listaEventoResponseDto;
     }
-    void atualizarEvento(@MappingTarget Evento evento,EventoRequestDto eventoRequestDto);
-
+    void atualizarEvento(@MappingTarget Evento evento,AtualizarEventoRequestDto atualizarEventoRequestDto);
 }
