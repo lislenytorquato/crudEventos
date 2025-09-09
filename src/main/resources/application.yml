@@ -3,10 +3,12 @@
  spring:
   application:
    name: eventos
- datasource:
-  url: jdbc:postgresql://localhost:5432/eventos-db
-  username: eventos
-  password: eventos
+
+  datasource:
+   url: jdbc:postgresql://localhost:5432/eventos-db
+   username: eventos
+   password: eventos
+
 
 #JPA/Hibernate
 

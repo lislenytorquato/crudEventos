@@ -26,7 +26,7 @@ public class Evento {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "local_id")
     private Local local;
-    @OneToMany(mappedBy = "participante", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "evento", cascade = CascadeType.ALL)
     private List<EventoParticipante> eventosParticipantes = new ArrayList<>();
 
 }
