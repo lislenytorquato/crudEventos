@@ -4,6 +4,10 @@ import com.crud.eventos.dto.AtualizarEventoRequestDto;
 import com.crud.eventos.dto.EventoRequestDto;
 import com.crud.eventos.dto.EventoResponseDto;
 import com.crud.eventos.dto.ParticipanteDto;
+import com.crud.eventos.exceptions.EventoException;
+import com.crud.eventos.exceptions.EventoParticipanteException;
+import com.crud.eventos.exceptions.LocalException;
+import com.crud.eventos.exceptions.ParticipanteException;
 import com.crud.eventos.helper.TestHelper;
 import com.crud.eventos.mapper.EventoMapper;
 import com.crud.eventos.model.Evento;
@@ -29,9 +33,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.crud.eventos.helper.TestHelper.*;
-import static org.hamcrest.Matchers.any;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -161,7 +163,7 @@ void deveCriarEvento(){
         Mockito.verify(localRepository,atMost(1)).delete(local.get());
     }
 
-    @DisplayName("3- Deve atualizar evento")
+    @DisplayName("4- Deve atualizar evento")
     @Test
     void deveAtualizarEvento(){
         AtualizarEventoRequestDto atualizarEventoRequestDto = atualizarEventoRequestDto();
@@ -195,5 +197,36 @@ void deveCriarEvento(){
         Assertions.assertEquals(eventoResponse.getParticipantes().get(1).isPresenca_confirmada(),response.getParticipantes().get(1).isPresenca_confirmada());
 
 
+    }
+
+    @DisplayName("5- Deve lançar exceção quando evento nao encontrado")
+    @Test
+    void deveLancarExcecaoQuandoEventoNaoEncontrado(){
+        Assertions.assertThrows(EventoException.class,()->this.eventoService.atualizarEvento(1L,atualizarEventoRequestDto()), MENSAGEM_EVENTO_EXCEPTION);
+        Assertions.assertThrows(EventoException.class,()->this.eventoService.deletarEvento(1L), MENSAGEM_EVENTO_EXCEPTION);
+    }
+
+    @DisplayName("6- Deve lançar exceção quando local nao encontrado")
+    @Test
+    void deveLancarExcecaoQuandoLocalNaoEncontrado(){
+    Mockito.when(eventoRepository.findById(ID_EVENTO)).thenReturn(Optional.of(evento()));
+    Mockito.when(eventoParticipanteRepository.findById(ID_EVENTO_PARTICIPANTE_1)).thenReturn(Optional.of(eventoParticipante1()));
+        Mockito.when(eventoParticipanteRepository.findById(ID_EVENTO_PARTICIPANTE_2)).thenReturn(Optional.of(eventoParticipante2()));
+        Assertions.assertThrows(LocalException.class,()->this.eventoService.deletarEvento(ID_EVENTO), MENSAGEM_LOCAL_EXCEPTION);
+    }
+
+    @DisplayName("7- Deve lançar exceção quando eventoparticipante nao encontrado")
+    @Test
+    void deveLancarExcecaoQuandoEventoParticipanteNaoEncontrado(){
+        Mockito.when(eventoRepository.findById(ID_EVENTO)).thenReturn(Optional.of(evento()));
+      Assertions.assertThrows(EventoParticipanteException.class,()->this.eventoService.deletarEvento(1L), MENSAGEM_EVENTO_PARTICIPANTE_EXCEPTION);
+    }
+    @DisplayName("8- Deve lançar exceção quando participante nao encontrado")
+    @Test
+    void deveLancarExcecaoQuandoParticipanteNaoEncontrado(){
+        EventoRequestDto eventoRequest = TestHelper.requestDto(NOME_EVENTO,DESCRICAO_EVENTO,DATA_EVENTO,NOME_LOCAL,ENDERECO_LOCAL,CAPACIDADE_LOCAL,ID_PARTICIPANTE_1,ID_PARTICIPANTE_2);
+        Evento evento = mapper.requestToEntity(eventoRequest);
+        Mockito.when(localRepository.save(Mockito.any(Local.class))).thenReturn(evento.getLocal());
+        Assertions.assertThrows(ParticipanteException.class,()->this.eventoService.criarEvento(eventoRequest), MENSAGEM_PARTICIPANTE_EXCEPTION);
     }
 }

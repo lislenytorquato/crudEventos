@@ -26,6 +26,13 @@ public class TestHelper {
     public static final String ENDERECO_LOCAL = "Rua das Flores, 123";
     public static final int CAPACIDADE_LOCAL = 100;
     public static final Long ID_EVENTO = 1L;
+    public static final Long ID_EVENTO_PARTICIPANTE_1 = 1L;
+    public static final Long ID_EVENTO_PARTICIPANTE_2 = 2L;
+    public static final Long ID_LOCAL = 1L;
+    public static final String MENSAGEM_EVENTO_EXCEPTION = "Evento nao encontrado";
+    public static final String MENSAGEM_LOCAL_EXCEPTION = "Local nao encontrado";
+    public static final String MENSAGEM_EVENTO_PARTICIPANTE_EXCEPTION = "EventoParticipante nao encontrado";
+    public static final String MENSAGEM_PARTICIPANTE_EXCEPTION = "Participante nao encontrado";
 
     public static AtualizarEventoRequestDto atualizarEventoRequestDto(){
         return AtualizarEventoRequestDto.builder()
@@ -151,6 +158,7 @@ public class TestHelper {
                 .capacidade(CAPACIDADE_LOCAL)
                 .build();
     }
+
     public static LocalDto localDto(){
         return LocalDto.builder()
                 .nome(NOME_LOCAL)

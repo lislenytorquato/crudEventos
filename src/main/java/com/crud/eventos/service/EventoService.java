@@ -4,6 +4,10 @@ import com.crud.eventos.dto.AtualizarEventoRequestDto;
 import com.crud.eventos.dto.EventoRequestDto;
 import com.crud.eventos.dto.EventoResponseDto;
 import com.crud.eventos.dto.ParticipanteDto;
+import com.crud.eventos.exceptions.EventoException;
+import com.crud.eventos.exceptions.EventoParticipanteException;
+import com.crud.eventos.exceptions.LocalException;
+import com.crud.eventos.exceptions.ParticipanteException;
 import com.crud.eventos.mapper.EventoMapper;
 import com.crud.eventos.model.Evento;
 import com.crud.eventos.model.EventoParticipante;
@@ -65,7 +69,7 @@ public class EventoService {
     public EventoResponseDto atualizarEvento(Long id, AtualizarEventoRequestDto atualizarEventoRequestDto){
         List<Boolean> presencasConfirmadas = new ArrayList<>();
 
-        Evento evento = eventoRepository.findById(id).orElseThrow();
+        Evento evento = eventoRepository.findById(id).orElseThrow(()->new EventoException("Evento nao encontrado"));
 
         mapper.atualizarEvento(evento,atualizarEventoRequestDto);
 
@@ -84,17 +88,17 @@ public class EventoService {
     }
 
     public void deletarEvento(Long id){
-        Evento evento = eventoRepository.findById(id).orElseThrow();
+        Evento evento = eventoRepository.findById(id).orElseThrow(()->new EventoException("Evento nao encontrado"));
 
         evento.getEventosParticipantes().forEach(eventoParticipante -> {
 
-                EventoParticipante eventoParticipanteEncontrado = eventoParticipanteRepository.findById(eventoParticipante.getId()).orElseThrow();
+                EventoParticipante eventoParticipanteEncontrado = eventoParticipanteRepository.findById(eventoParticipante.getId()).orElseThrow(()-> new EventoParticipanteException("EventoParticipante nao encontrado"));
                 eventoParticipanteRepository.delete(eventoParticipanteEncontrado);
 
         });
         eventoRepository.delete(evento);
 
-        Local local = localRepository.findById(evento.getLocal().getId()).orElseThrow();
+        Local local = localRepository.findById(evento.getLocal().getId()).orElseThrow(()->new LocalException("Local nao encontrado"));
         localRepository.delete(local);
     }
 
@@ -103,7 +107,7 @@ public class EventoService {
         List<Boolean> presencas_confirmadas = new ArrayList<>();
 
         eventoRequestDto.getIdsParticipantes().forEach(idParticipante ->{
-            Participante participante = participanteRepository.findById(idParticipante).orElseThrow();
+            Participante participante = participanteRepository.findById(idParticipante).orElseThrow(()-> new ParticipanteException("Participante nao encontrado"));
             participantes.add(participante);
         });
         participantes.forEach(participante -> {
