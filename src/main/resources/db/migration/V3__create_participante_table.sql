@@ -1,0 +1,5 @@
+CREATE TABLE participante(
+id BIGINT PRIMARY KEY,
+nome VARCHAR(255),
+email VARCHAR(255)
+);
